@@ -1,5 +1,5 @@
 import numpy as np
-from robot_manager import FourDirectionRobotManager
+from robots.dummy import FourDirectionRobotManager
 
 # Read the API key from a text file
 with open("openai_api_key.txt", "r") as f:
@@ -35,9 +35,40 @@ goal_description = f"The goal is {abs(goal_position[0] - robot_position[0])} ste
 # Generate a list of low-level steps to achieve the high-level goal
 steps = robot_manager.generate_steps(goal)
 
-# Print the goal and the list of steps
-print(goal)
-print(goal_description)
-print("Steps:")
+# Print the initial grid
+grid = np.zeros((grid_size, grid_size), dtype=str)
+grid[robot_position[0], robot_position[1]] = "o"
+grid[goal_position[0], goal_position[1]] = "x"
+print("Initial grid:")
+print(grid)
+
+def step_robot_position(robot_position, step):
+    """
+    Update the robot's position based on the low-level step taken.
+
+    Args:
+        robot_position (ndarray): The robot's current position.
+        step (str): The low-level step taken.
+
+    Returns:
+        list: The robot's updated position.
+    """
+    if step == "Move the robot up":
+        robot_position[0] -= 1
+    elif step == "Move the robot down":
+        robot_position[0] += 1
+    elif step == "Move the robot left":
+        robot_position[1] -= 1
+    elif step == "Move the robot right":
+        robot_position[1] += 1
+    return robot_position
+
+# Take each step and print the updated grid
 for step in steps:
-    print(step)
+    robot_manager.execute_step(step)
+    robot_position = step_robot_position(robot_position, step)
+    grid = np.zeros((grid_size, grid_size), dtype=str)
+    grid[robot_position[0], robot_position[1]] = "o"
+    grid[goal_position[0], goal_position[1]] = "x"
+    print(f"Grid after taking step '{step}':")
+    print(grid)
