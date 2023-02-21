@@ -12,7 +12,7 @@ robot_manager = FourDirectionRobotManager(api_key=api_key)
 goal = "Reach the goal location"
 
 # Define the grid size
-grid_size = 5
+grid_size = 6
 
 # Randomly place the robot and the goal in the grid
 robot_position = np.random.randint(grid_size, size=2)
@@ -20,20 +20,28 @@ goal_position = np.random.randint(grid_size, size=2)
 
 # Describe the goal location relative to the robot in natural language
 if goal_position[0] < robot_position[0]:
-    direction = "up"
+    vert_direction = "up"
 elif goal_position[0] > robot_position[0]:
-    direction = "down"
-elif goal_position[1] < robot_position[1]:
-    direction = "left"
+    vert_direction = "down"
+if goal_position[1] < robot_position[1]:
+    horiz_direction = "left"
 elif goal_position[1] > robot_position[1]:
-    direction = "right"
-else:
-    direction = "at"
+    horiz_direction = "right"
 
-goal_description = f"The goal is {abs(goal_position[0] - robot_position[0])} steps {direction} and {abs(goal_position[1] - robot_position[1])} steps away from the robot."
+if goal_position[0]==robot_position[0]:
+    vert_direction = "away"
+if goal_position[1]==robot_position[1]:
+    horiz_direction = "away"
+
+# environment_description = f"The robot is at position {robot_position} and the goal is at position {goal_position}."
+goal_description = f"The goal is {abs(goal_position[0] - robot_position[0])} steps {vert_direction} and {abs(goal_position[1] - robot_position[1])} steps {horiz_direction} from the robot."
+if vert_direction=="away" and horiz_direction=="away":
+    goal_description = f"The goal is at the robot's current position."
 
 # Generate a list of low-level steps to achieve the high-level goal
-steps = robot_manager.generate_steps(goal)
+# steps = robot_manager.generate_steps(environment_description, goal)
+steps = robot_manager.generate_steps(goal_description, goal)
+# steps = robot_manager.generate_steps(environment_description+goal_description, goal)
 
 # Print the initial grid
 grid = np.zeros((grid_size, grid_size), dtype=str)

@@ -13,11 +13,12 @@ class RobotManager(ABC):
         openai.api_key = api_key
 
     @abstractmethod
-    def generate_steps(self, goal):
+    def generate_steps(self, environment, goal):
         """
         Generate a list of low-level steps to achieve a high-level goal using OpenAI's language model.
 
         Args:
+            environment (str): The description of the environment state.
             goal (str): The high-level goal to achieve.
 
         Returns:
@@ -35,7 +36,7 @@ class RobotManager(ABC):
         """
         pass
 
-    def achieve_goal(self, goal):
+    def achieve_goal(self, environment, goal):
         """
         Break down a high-level goal into low-level steps and execute them to achieve the goal.
 
@@ -43,7 +44,7 @@ class RobotManager(ABC):
             goal (str): The high-level goal to achieve.
         """
         # Generate the list of low-level steps to achieve the goal
-        steps = self.generate_steps(goal)
+        steps = self.generate_steps(environment, goal)
 
         # Execute each step in order
         for step in steps:

@@ -20,30 +20,37 @@ class FourDirectionRobotManager(RobotManager):
             "reach_goal": "Reach the goal location",
         }
 
-    def generate_steps(self, goal):
+    def generate_steps(self, environment, goal):
         """
         Generate a list of low-level steps to achieve a high-level goal using OpenAI's language model.
 
         Args:
+            environment (str): The description of the environment state.
             goal (str): The high-level goal to achieve.
 
         Returns:
             list: A list of low-level steps to achieve the high-level goal.
         """
         # Create a prompt that lists the available low-level policies as options for each step
-        prompt = f"List the steps to achieve the goal '{goal}'. For each step, choose one of the following policies: \n"
+        prompt = f"Consider the following environment: '{environment}'.\n"
+        prompt += "List all the steps required to achieve the goal: '{goal}'. For each step, choose one of the following policies: \n"
         prompt += "\n".join([f"{i+1}. {policy}" for i, policy in enumerate(self.policies.values())])
         prompt += "\n"
 
+        print("Prompt: ", prompt)
+
         # Use OpenAI's language model to generate a list of steps for achieving the goal
         response = openai.Completion.create(
-            engine="text-davinci-002",
+            # engine="text-davinci-002", 
+            engine="text-curie-001", 
             prompt=prompt,
-            max_tokens=1024,
+            max_tokens=2048,
             n=1,
             stop=None,
             temperature=0.5,
         )
+
+        print("Response: ", response)
 
         # Extract the generated steps from the response
         steps = response.choices[0].text.strip().split("\n")
