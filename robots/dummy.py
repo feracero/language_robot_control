@@ -33,18 +33,19 @@ class FourDirectionRobotManager(RobotManager):
         """
         # Create a prompt that lists the available low-level policies as options for each step
         prompt = f"Consider the following environment: '{environment}'.\n"
-        prompt += "List all the steps required to achieve the goal: '{goal}'. For each step, choose one of the following policies: \n"
+        prompt += "List all the steps required to achieve the robot to arrive to the goal location. For each step, choose one of the following policies: \n"
         prompt += "\n".join([f"{i+1}. {policy}" for i, policy in enumerate(self.policies.values())])
         prompt += "\n"
+        prompt += "Make sure you provide sufficient steps for the robot to achieve the goal."
 
         print("Prompt: ", prompt)
 
         # Use OpenAI's language model to generate a list of steps for achieving the goal
         response = openai.Completion.create(
-            # engine="text-davinci-002", 
-            engine="text-curie-001", 
+            engine="text-davinci-002", 
+            # # engine="text-curie-001", 
             prompt=prompt,
-            max_tokens=2048,
+            max_tokens=1024,
             n=1,
             stop=None,
             temperature=0.5,
